@@ -8,7 +8,7 @@
 	var routes = Symbol('routes');
 	var components = Symbol('components');
 
-	var componentsList = [
+	var routesList = [
 	];
 
 
@@ -18,65 +18,55 @@
 			this[components] = [];
 			this[routes] = [];
 		}
-		addComponent(obj){
+		createComponent(obj){
 			var comp = new Component(obj.controller, obj.selector, obj.template);
 			this[components].push(comp);
 			return comp;
 		}
-		registerRoute(routeName, comp){
-			this[routes].push({routeName, comp});
-		}
 	}
 
 	class Component{
-		contructor(controller, selector, template){
+		constructor(controller, selector, template){
 			this.controller = controller;
 			this.selector = selector;
 			this.template = template;
 		}
 
 		activate(){
-			doc.querySelector(selector).innerHTML = template;
+			doc.querySelector(this.selector).innerHTML = this.template;
 		}
+
+		registerRoute(routeName){
+			routesList.push({
+				routeName: routeName,
+				component: this
+			});
+		}
+
 	}
 
+	console.log(doc.querySelector('#test'));
 
-
-
-	global.addEventListener(ROUTE_EVENT_NAME, routeListener);
-
-
-
-	function routeListener(event) {
+	function hashChangeListener(event) {
 		var URL = event.newURL.split('#')[1];
 		goThroughRoutesList(URL);
 	}
 
 	function goThroughRoutesList(URL) {
-		for (var i = 0; i < componentsList.length; i++) {
-			if (URL === componentsList[i].route){
-				var el = doc.querySelector(componentsList[i].selector);
-				el.innerHTML = componentsList[i].template;
+		for (var i = 0; i < routesList.length; i++) {
+			if (URL === routesList[i].routeName){
+				routesList[i].component.activate();
 			}
 		}
 	}
 
-	function addComponent(component){
-		componentsList.push(component);
-	}
-
-
-
-
-
+	global.addEventListener(ROUTE_EVENT_NAME, hashChangeListener);
 
 
 
 	var myFramework = {
 		Module: Module
 	};
-	myFramework.addComponent = addComponent;
-/*	myFramework.Module = Module;*/
 	global.o = myFramework;
 
 })(window);
