@@ -1,19 +1,15 @@
-body{
-	font-family: Calibri 18px;
-	background: #555;
-	color: #fff;
-}
-
-a{
-	display: block;
-	color: gold;
-	font-weight: bold;
-}
-
-#test{
-	border: 3px dashed #fff;
-	height: 600px;
-	width: 400px;
+nav ul{
+	list-style: none;
 	margin: auto;
-	background: #777;
+	padding: 0;
+}
+
+nav li{
+	display: inline-block;
+}
+
+.app-container{
+	height: 900px;
+	border-left: 1px solid #e3e3e3;
+	border-right: 1px solid #e3e3e3;
 }
