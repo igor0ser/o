@@ -5,71 +5,103 @@
 	var ROUTE_EVENT_NAME = 'hashchange';
 	var doc = global.document;
 
-	var routes = Symbol('routes');
-	var components = Symbol('components');
+	var routeSymbol = Symbol('routeSymbol');
+	var componentSymbol = Symbol('components');
+	var dataSymbol = Symbol('datas');
 
-	var routesList = [];
-	var modules = {};
-	var models = {};
+	var routeList = [];
+	var dataList = {};
+	var modules = [];
 
 	class Module{
 		constructor(name){
-			this[components] = [];
-			this[routes] = [];
+			this[componentSymbol] = [];
+			this[routeSymbol] = [];
+			this.name = name;
 
-			modules[name] = this;
-
+			modules.push(this);
 		}
 		createComponent(obj){
-			var comp = new Component(obj.controller, obj.selector, obj.template);
-			this[components].push({
+			var comp = new Component(obj.selector, obj.template);
+			this[componentSymbol].push({
 				name: obj.name,
 				component: comp
 			});
 			return comp;
 		}
 		getComponent(name){
-			for (var i = 0; i < this[components].length; i++) {
-				if (this[components][i].name === name){
-					return this[components][i].component;
+			for (var i = 0; i < this[componentSymbol].length; i++) {
+				if (this[componentSymbol][i].name === name){
+					return this[componentSymbol][i].component;
 				}
 			}
 		}
 	}
 
 	class Component{
-		constructor(controller, selector, template){
+		constructor(selector, template){
 			this.active = false;
-			this.controller = controller;
+			this.controller = function(){};
 			this.selector = selector;
 			this.template = template;
+
+			this[dataSymbol] = {};
+			this.elem = doc.querySelector(this.selector);
+
 		}
 
 		activate(){
 			this.active = true;
 			doc.querySelector(this.selector).innerHTML = this.template;
+			this.controller(this.elem, this.getDataModel.bind(this));
 		}
 
 		registerRoute(routeName){
-			routesList.push({
+			routeList.push({
 				routeName: routeName,
 				component: this
 			});
 			return this;
 		}
 
-		addModel(model){
-			model.addToComponentList(this);
+		addData(data){
+			data.addToComponentList(this);
+			this[dataSymbol][data.name] = data;
 			return this;
+		}
+
+		applyController(func){
+			this.controller = func;
+			return this;
+		}
+
+		getDataModel(name){
+			return this[dataSymbol][name].model;
+		}
+
+		addListener(eventName, selector, dataNameWillBeChanged, func){
+			var _this = this;
+
+			this.elem.addEventListener(eventName, function(event){
+				if (event.target.matches(selector)){
+					var resFunc = func(event);
+					resFunc(_this.elem, _this.getDataModel.bind(_this));
+
+					_this[dataSymbol][dataNameWillBeChanged].updateComponents();
+
+				}
+
+			});
 		}
 	}
 
-	class Model{
-		constructor(name, data){
+// data = model 
+	class Data{
+		constructor(name, model){
 			this.componentList = [];
-			this.data = data;
-
-			models[name] = this;
+			this.model = model;
+			this.name = name;
+			dataList[name] = this;
 		}
 		addToComponentList(component){
 			this.componentList.push(component);
@@ -81,37 +113,57 @@
 		}
 	}
 
+// routing
+	global.addEventListener(ROUTE_EVENT_NAME, hashChangeListener);
 	function hashChangeListener(event) {
 		var URL = event.newURL.split('#')[1];
-		goThroughRoutesList(URL);
-	}
 
-	function goThroughRoutesList(URL) {
-		for (var i = 0; i < routesList.length; i++) {
-			if (URL === routesList[i].routeName){
-				routesList[i].component.activate();
+		for (var i = 0; i < routeList.length; i++) {
+			if (URL === routeList[i].routeName){
+				deactivate(routeList[i].component.selector);
+				routeList[i].component.activate();
 			}
 		}
 	}
 
+
+
+// private function for deactivating
+
+	function deactivate(selector){
+		for (var i = 0; i < modules.length; i++) {
+			for (var j = 0; j < modules[i][componentSymbol].length; j++) {
+				var comp = modules[i][componentSymbol][j].component;
+				if (comp.selector === selector){
+					comp.active = false;
+				}
+			}
+		}
+	}
+
+// public functions
+
 	function getModule(name){
-		return modules[name];
+		for (var i = 0; i < modules.length; i++) {
+			if (modules[i].name === name){
+				return modules[i];
+			}
+		}
 	}
 
-	function getModel(name){
-		return models[name];
+	function getData(name){
+		return dataList[name];
 	}
 
-	global.addEventListener(ROUTE_EVENT_NAME, hashChangeListener);
 
-
-
-	var myFramework = {
+// applying facade to global object
+	var ownFramework = {
 		Module: Module,
 		getModule: getModule,
-		Model: Model,
-		getModel: getModel
+
+		Data: Data,
+		getData: getData
 	};
-	global.o = myFramework;
+	global.o = global.ownFramework = ownFramework;
 
 })(window);

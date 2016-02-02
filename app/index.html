@@ -12,6 +12,7 @@
 	<header class="container well text-center">
 		<div class="row">
 			<h1>Another ToDo App</h1>
+			<h4 id="title"></h4>
 		</div>
 		<nav class="row">
 			<ul class="clearfix">
@@ -35,7 +36,11 @@
 	</header>
 
 	<div class="container app-container">
-		<div id="app"></div>
+		<div id="app">
+			<div class="text-center">
+				Welcome! This is todo application implemented using my own framework - <b>O</b>
+			</div>
+		</div>
 	</div>
 
 
@@ -47,10 +52,16 @@
 	</footer>
 
 
+	<!-- framework -->
 	<script src="libraries/myFramework.js"></script>
+	
+	<!-- app -->
 	<script src="app.js"></script>
+
+	<!-- components -->
 	<script src="components/form.js"></script>
 	<script src="components/done.js"></script>
 	<script src="components/todo.js"></script>
+	<script src="components/title.js"></script>
 </body>
 </html>
