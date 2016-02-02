@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Testing my own framework</title>
 	<link rel="stylesheet" href="libraries/bootstrap.css">
-	<link rel="stylesheet" type="text/css" href="main.css">
+	<link rel="stylesheet" href="main.css">
 </head>
 <body>
 
@@ -51,9 +51,21 @@
 		</div>
 	</footer>
 
+	<!-- templates -->
+	<script id="entry-template" type="text/x-handlebars-template">
+	  <div class="entry">
+	    <h1>{{title}}</h1>
+	    <div class="body">
+	      {{body}}
+	    </div>
+	  </div>
+	</script>
 
+	
+	<!-- libraries -->
+	<script src="libraries/handlebars-v4.0.5.js"></script>
 	<!-- framework -->
-	<script src="libraries/myFramework.js"></script>
+	<script src="own-framework/own-framework.js"></script>
 	
 	<!-- app -->
 	<script src="app.js"></script>
@@ -63,5 +75,7 @@
 	<script src="components/done.js"></script>
 	<script src="components/todo.js"></script>
 	<script src="components/title.js"></script>
+
+
 </body>
 </html>

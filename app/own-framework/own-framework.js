@@ -56,6 +56,10 @@
 			this.controller(this.elem, this.getDataModel.bind(this));
 		}
 
+		deactivate(){
+			this.active = false;
+		}
+
 		registerRoute(routeName){
 			routeList.push({
 				routeName: routeName,
@@ -120,7 +124,7 @@
 
 		for (var i = 0; i < routeList.length; i++) {
 			if (URL === routeList[i].routeName){
-				deactivate(routeList[i].component.selector);
+				deactivateComponentsBySelector(routeList[i].component.selector);
 				routeList[i].component.activate();
 			}
 		}
@@ -130,12 +134,12 @@
 
 // private function for deactivating
 
-	function deactivate(selector){
+	function deactivateComponentsBySelector(selector){
 		for (var i = 0; i < modules.length; i++) {
 			for (var j = 0; j < modules[i][componentSymbol].length; j++) {
 				var comp = modules[i][componentSymbol][j].component;
 				if (comp.selector === selector){
-					comp.active = false;
+					comp.deactivate();
 				}
 			}
 		}
@@ -156,7 +160,7 @@
 	}
 
 
-// applying facade to global object
+// revealing module
 	var ownFramework = {
 		Module: Module,
 		getModule: getModule,
