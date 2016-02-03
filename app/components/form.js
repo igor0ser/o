@@ -11,7 +11,7 @@
 		.createComponent({
 			name: 'form',
 			selector: "#app",
-			template: template
+			template: templates.form
 		})
 
 		.registerRoute('/form')
