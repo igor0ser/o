@@ -63,7 +63,6 @@
 			</tr>
 
 			{{#each tasks}}
-			
 			<tr>
 			{{#if this.done}}
 				<td>{{@index}}</td>
@@ -75,6 +74,53 @@
 		</table>
 	</script>
 
+	<script id="form-template" type="text/x-handlebars-template">
+		<h3 class="text-center">
+			Add some task
+		</h3>
+		<form class="text-center">
+			<input 
+				required type="text" 
+				placeholder="Type another task here..."
+				class="input-text form-control"/>
+			<button class="btn btn-info">
+				Add task
+			</button>
+		</form>
+	</script>
+
+	<script id="title-template" type="text/x-handlebars-template">
+		You have <b>{{done}}</b> done cases and <b>{{undone}}</b> undone cases
+	</script>
+
+	<script id="todo-template" type="text/x-handlebars-template">
+		<h3 class="text-center">
+			Tasks to do
+		</h3>
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Task</th>
+				<th>Done</th>
+			</tr>
+			{{#each tasks}}
+			{{#unless this.done}}
+			<tr>
+				<td>{{@index}}</td>
+				<td>{{this.name}}</td>
+				<td>
+					<button class="btn btn-info" data-o-id={{this.id}}>
+						Done
+					</button>
+				</td>
+			</tr>
+			{{/unless}}
+			{{/each}}
+		</table>
+
+	</script>
+
+
 	
 	<!-- libraries -->
 	<script src="libraries/handlebars-v4.0.5.js"></script>
@@ -85,11 +131,10 @@
 	<script src="app.js"></script>
 
 	<!-- components -->
-	<!--
-	<script src="components/form.js"></script>
+
 	<script src="components/todo.js"></script>
 	<script src="components/title.js"></script>
-	-->
+	<script src="components/form.js"></script>
 	<script src="components/done.js"></script>
 
 </body>

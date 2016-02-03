@@ -54,7 +54,7 @@
 
 		activate(){
 			this.active = true;
-			console.log(this.getDataModel.bind(this));
+
 			this.elem.innerHTML = this.controller.getView(this.getDataModel.bind(this));
 			//this.controller(this.elem, this.getDataModel.bind(this));
 		}
@@ -122,8 +122,7 @@
 
 	class Controller{
 		constructor(ctrlFunc){
-			console.log(ctrlFunc);
-			this.ctrlFunc = ctrlFunc;
+			this.ctrlFunc = ctrlFunc || function(){};
 		}
 		compile(template){
 			this.template = Handlebars.compile(template);

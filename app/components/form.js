@@ -1,7 +1,11 @@
 (function () {
 	'use stict';
 
-	var template = '<h3 class="text-center">Add some task</h3><form class="text-center"><input required type="text" placeholder="Type another task here..." class="input-text form-control"/><button class="btn btn-info">Add task</button></form>';
+	//var template = '<h3 class="text-center">Add some task</h3><form class="text-center"><input required type="text" placeholder="Type another task here..." class="input-text form-control"/><button class="btn btn-info">Add task</button></form>';
+
+	var template = document.getElementById('form-template').innerHTML;
+
+
 
 	o.getModule('myApp')
 		.createComponent({
@@ -21,7 +25,7 @@
 
 				model.push({
 					id: model[model.length-1].id + 1,
-					task: compEl.querySelector('.input-text').value,
+					name: compEl.querySelector('.input-text').value,
 					done: false
 				});
 			};
