@@ -1,7 +1,7 @@
 (function(){
 	'use strict';
 
-
+	// I'm using template syntax from ES6 here
 	var templates = {
 		title: `
 			You have <b>{{done}}</b> done cases and <b>{{undone}}</b> undone cases

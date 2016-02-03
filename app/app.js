@@ -21,7 +21,7 @@
 		},
 	];
 
-	var todoListData = new o.Data('todoList', todoList);
+	var todoListData = new o.DataModel('todoList', todoList);
 
 
 })();
