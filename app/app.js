@@ -28,3 +28,23 @@
 	console.log(`${ x } + ${ y } = ${ x + y}`);*/
 
 })();
+
+function readTemplateFile(fileURL, callback)
+{
+    var file = new XMLHttpRequest();
+    file.open("GET", fileURL, true);
+    file.onreadystatechange = function ()
+    {
+        if(file.readyState === 4)
+        {
+            if(file.status === 200 || file.status == 0)
+            {
+                var text = file.responseText;
+                callback(text);
+            }
+        }
+    }
+    file.send(null);
+}
+
+readTemplateFile('components/done.handlebars', alert);

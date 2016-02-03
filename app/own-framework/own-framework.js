@@ -2,16 +2,19 @@
 	'use strict';
 
 	//constants
-	var ROUTE_EVENT_NAME = 'hashchange';
+	
 	var doc = global.document;
 
+
+
+/*=========        MODULE        =========*/
+
+	//private list of modules
+	var modules = [];
+
+	//faking private fields using ES6 Symbols
 	var routeSymbol = Symbol('routeSymbol');
 	var componentSymbol = Symbol('components');
-	var dataSymbol = Symbol('datas');
-
-	var routeList = [];
-	var dataList = {};
-	var modules = [];
 
 	class Module{
 		constructor(name){
@@ -38,6 +41,24 @@
 		}
 	}
 
+	//public function to get Module by name
+	function getModule(name){
+		for (var i = 0; i < modules.length; i++) {
+			if (modules[i].name === name){
+				return modules[i];
+			}
+		}
+	}
+
+
+/*=========      COMPONENTS      =========*/
+
+	//private list to registering routes
+	var routeList = [];
+
+	//faking private field using ES6 Symbols
+	var dataSymbol = Symbol('datas');
+
 	class Component{
 		constructor(selector, template, ctrlFunc){
 
@@ -53,10 +74,8 @@
 		}
 
 		activate(){
-			this.active = true;
-
 			this.elem.innerHTML = this.controller.getView(this.getDataModel.bind(this));
-			//this.controller(this.elem, this.getDataModel.bind(this));
+			this.active = true;
 		}
 
 		deactivate(){
@@ -76,11 +95,6 @@
 			this[dataSymbol][data.name] = data;
 			return this;
 		}
-
-/*		applyController(func){
-			this.controller = func;
-			return this;
-		}*/
 
 		getDataModel(name){
 			return this[dataSymbol][name].model;
@@ -102,7 +116,42 @@
 		}
 	}
 
-// data = model 
+	//private function for deactivating components that using particular selector
+	function deactivateComponentsBySelector(selector){
+		for (var i = 0; i < modules.length; i++) {
+			for (var j = 0; j < modules[i][componentSymbol].length; j++) {
+				var comp = modules[i][componentSymbol][j].component;
+				if (comp.selector === selector){
+					comp.deactivate();
+				}
+			}
+		}
+	}
+
+
+/*=========      CONTROLLER      =========*/
+
+	class Controller{
+		constructor(ctrlFunc){
+			this.ctrlFunc = ctrlFunc || function(){};
+		}
+		compile(template){
+			this.template = Handlebars.compile(template);
+		}
+		getView(getDataModel){
+			return this.template(new this.ctrlFunc(getDataModel));
+		}
+	}
+
+	
+
+
+/*=========         DATA         =========*/
+	/*Data means Model in my framework*/
+
+	//private list for saving models that are using in our application
+	var dataList = {};
+
 	class Data{
 		constructor(name, model){
 			this.componentList = [];
@@ -120,20 +169,15 @@
 		}
 	}
 
-	class Controller{
-		constructor(ctrlFunc){
-			this.ctrlFunc = ctrlFunc || function(){};
-		}
-		compile(template){
-			this.template = Handlebars.compile(template);
-		}
-		getView(getDataModel){
-			return this.template(new this.ctrlFunc(getDataModel));
-		}
+	//public function to get Data(Model) by name
+	function getData(name){
+		return dataList[name];
 	}
 
-// routing
-	global.addEventListener(ROUTE_EVENT_NAME, hashChangeListener);
+
+/*=========       ROUTING       =========*/
+	var ROUTE_EVENT_NAME = 'hashchange';
+
 	function hashChangeListener(event) {
 		var URL = event.newURL.split('#')[1];
 
@@ -145,37 +189,11 @@
 		}
 	}
 
+	global.addEventListener(ROUTE_EVENT_NAME, hashChangeListener);
 
 
-// private function for deactivating
+/*=========   REAVILING MODULE   =========*/
 
-	function deactivateComponentsBySelector(selector){
-		for (var i = 0; i < modules.length; i++) {
-			for (var j = 0; j < modules[i][componentSymbol].length; j++) {
-				var comp = modules[i][componentSymbol][j].component;
-				if (comp.selector === selector){
-					comp.deactivate();
-				}
-			}
-		}
-	}
-
-// public functions
-
-	function getModule(name){
-		for (var i = 0; i < modules.length; i++) {
-			if (modules[i].name === name){
-				return modules[i];
-			}
-		}
-	}
-
-	function getData(name){
-		return dataList[name];
-	}
-
-
-// revealing module
 	var ownFramework = {
 		Module: Module,
 		getModule: getModule,
