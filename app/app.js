@@ -1,38 +1,27 @@
-var source = document.getElementById('entry-template').innerHTML;
-var template = Handlebars.compile(source);
-
-var context = {title: "My New Post", body: "This is my first post!"};
-var html    = template(context);
-console.log(html);
-
-
-
-
-
 (function(){
 	'use strict';
 
 	var myApp = new o.Module('myApp');
 
-	var data = [
+	var todoList = [
 		{
 			id: 1,
-			task: 'Watch JS Talks aboud Design Patterns',
+			name: 'Watch JS Talks aboud Design Patterns',
 			done: false
 		},
 		{
 			id: 2,
-			task: 'Create own awesome framework',
+			name: 'Create own awesome framework',
 			done: false
 		},
 		{
 			id: 3,
-			task: 'Study English',
+			name: 'Study English',
 			done: true
 		},
 	];
 
-	var todoList = new o.Data('todoList', data);
+	var todoList = new o.Data('todoList', todoList);
 
 /*	var x = 1;
 	var y = 2;

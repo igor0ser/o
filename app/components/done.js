@@ -1,20 +1,33 @@
 (function () {
 	'use stict';
 
-	var template = '<h3 class="text-center">Done tasks</h3><table class="table"><tr><th>#</th><th>Task</th></table>';
+	//var template = '<h3 class="text-center">Done tasks</h3><table class="table"><tr><th>#</th><th>Task</th></table>';
+
+	var template = document.getElementById('done-template').innerHTML;
+	var t1 = Handlebars.compile(template);
+
 
 	o.getModule('myApp')
 		.createComponent({
 			name: 'done',
 			selector: "#app",
-			template: template
+			template: template,
+			ctrlFunc: ctrlFunc
 		})
 
 		.registerRoute('/done')
 
-		.addData(o.getData('todoList'))
+		.addData(o.getData('todoList'));
 
-		.applyController(function(compEl, getDataModel){
+		function ctrlFunc(getDataModel){
+			var model = getDataModel('todoList');
+			this.tasks = model;
+		}
+
+
+		
+
+		/*applyController(function(compEl, getDataModel){
 			var table = compEl.querySelector('tbody');
 			var model = getDataModel('todoList');
 
@@ -26,5 +39,5 @@
 				table.appendChild(tr);
 				j++;
 			}
-		});
+		});*/
 })();

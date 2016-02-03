@@ -52,13 +52,27 @@
 	</footer>
 
 	<!-- templates -->
-	<script id="entry-template" type="text/x-handlebars-template">
-	  <div class="entry">
-	    <h1>{{title}}</h1>
-	    <div class="body">
-	      {{body}}
-	    </div>
-	  </div>
+	<script id="done-template" type="text/x-handlebars-template">
+		<h3 class="text-center">
+			Done tasks
+		</h3>
+		<table class="table">
+			<tr>
+				<th>#</th>
+				<th>Task {{i}}</th>
+			</tr>
+
+			{{#each tasks}}
+			
+			<tr>
+			{{#if this.done}}
+				<td>{{@index}}</td>
+				<td>{{this.name}}</td>
+			{{/if}}
+			</tr>
+			{{/each}}
+
+		</table>
 	</script>
 
 	
@@ -71,11 +85,12 @@
 	<script src="app.js"></script>
 
 	<!-- components -->
+	<!--
 	<script src="components/form.js"></script>
-	<script src="components/done.js"></script>
 	<script src="components/todo.js"></script>
 	<script src="components/title.js"></script>
-
+	-->
+	<script src="components/done.js"></script>
 
 </body>
 </html>

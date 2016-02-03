@@ -22,7 +22,7 @@
 			modules.push(this);
 		}
 		createComponent(obj){
-			var comp = new Component(obj.selector, obj.template);
+			var comp = new Component(obj.selector, obj.template, obj.ctrlFunc);
 			this[componentSymbol].push({
 				name: obj.name,
 				component: comp
@@ -39,21 +39,24 @@
 	}
 
 	class Component{
-		constructor(selector, template){
-			this.active = false;
-			this.controller = function(){};
+		constructor(selector, template, ctrlFunc){
+
+			this.controller = new Controller(ctrlFunc);
 			this.selector = selector;
 			this.template = template;
 
-			this[dataSymbol] = {};
 			this.elem = doc.querySelector(this.selector);
+			this.active = false;
+			this[dataSymbol] = {};
 
+			this.controller.compile(this.template);
 		}
 
 		activate(){
 			this.active = true;
-			doc.querySelector(this.selector).innerHTML = this.template;
-			this.controller(this.elem, this.getDataModel.bind(this));
+			console.log(this.getDataModel.bind(this));
+			this.elem.innerHTML = this.controller.getView(this.getDataModel.bind(this));
+			//this.controller(this.elem, this.getDataModel.bind(this));
 		}
 
 		deactivate(){
@@ -74,10 +77,10 @@
 			return this;
 		}
 
-		applyController(func){
+/*		applyController(func){
 			this.controller = func;
 			return this;
-		}
+		}*/
 
 		getDataModel(name){
 			return this[dataSymbol][name].model;
@@ -114,6 +117,19 @@
 			for (var i = 0; i < this.componentList.length; i++) {
 				if (this.componentList[i].active) this.componentList[i].activate();
 			}
+		}
+	}
+
+	class Controller{
+		constructor(ctrlFunc){
+			console.log(ctrlFunc);
+			this.ctrlFunc = ctrlFunc;
+		}
+		compile(template){
+			this.template = Handlebars.compile(template);
+		}
+		getView(getDataModel){
+			return this.template(new this.ctrlFunc(getDataModel));
 		}
 	}
 
